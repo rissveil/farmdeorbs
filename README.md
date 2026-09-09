@@ -20,13 +20,13 @@
 
 <br/>
 
-## O que é isto
+## O que é ?
 
-**Farm de Orbs** é uma ferramenta para Windows que cria processos de jogos simulados para missões de Orbes do Discord sem instalar os jogos reais. Ela consulta a API pública do Discord para obter os nomes exatos dos processos esperados, copia um executável base, renomeia-o e o inicia em segundo plano. O Discord verifica a lista de processos e pode reconhecer o processo correspondente à missão.
+**Farm de Orbs** é uma ferramenta para Windows que cria processos de jogos simulados para missões de Orbes do Discord sem instalar os jogos. Ela consulta a API pública do Discord para obter os nomes exatos dos processos, copia um executável, renomeia-o e o inicia em segundo plano. O Discord verifica a lista de processos e reconhece o processo correspondente à missão.
 
-Sem modificação do cliente. Sem injeção de código. A ferramenta trabalha com a identificação do processo.
+Sem modificações. Sem injetar código. A ferramenta trabalha com a identificação do processo.
 
-> **Apenas para fins educacionais.** Use por sua conta e risco e respeite os termos de serviço aplicáveis.
+> **Apenas para fins educacionais.** Use por sua conta e risco e respeite os termos de serviço da plataforma.
 
 ## Modo de missão do Steam
 
@@ -37,11 +37,11 @@ Alguns jogos utilizam uma verificação adicional relacionada ao Steam. Nesse ca
 1. Pesquise o jogo pelo nome.
 2. Selecione o resultado correto.
 3. A ferramenta obtém as informações do aplicativo.
-4. Um manifesto do Steam é criado na pasta `steamapps/`.
+4. Um manifest do Steam é criado na pasta `steamapps/`.
 5. O executável simulado é colocado na pasta correspondente.
-6. Ao terminar, a ferramenta pode limpar os arquivos criados.
+6. Ao terminar, a ferramenta limpa os arquivos criados.
 
-**Compatível com jogos que exigem manifesto do Steam.**
+**Compatível com jogos que exigem manifest do Steam.**
 
 > **Dica:** demos e jogos completos podem possuir AppIDs diferentes. Sempre selecione o resultado correto.
 
