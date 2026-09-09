@@ -1,6 +1,4 @@
-# Contribuindo com o Farm de Orbs
-
-Obrigado pelo interesse em contribuir com o projeto.
+# Obrigado por usar o farmorbs
 
 ## Como começar
 
