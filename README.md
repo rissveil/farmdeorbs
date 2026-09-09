@@ -10,7 +10,7 @@
 
 <br/>
 
-*porque ninguém merece instalar centenas de GB só para conseguir alguns Orbes.*
+*para aqueles que não conseguem instalar jogos pesados ou simplesmente não querem.*
 
 <br/>
 
@@ -75,8 +75,8 @@ O modo Steam acrescenta a criação de um manifesto `appmanifest_<appid>.acf` e 
 ## Instalação
 
 ```bash
-git clone https://github.com/Rissa/farm-de-orbs.git
-cd farm-de-orbs
+git clone https://github.com/Rissa/farmdeorbs.git
+cd farmdeorbs
 pip install -r requirements.txt
 ```
 
