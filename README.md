@@ -14,7 +14,7 @@
 
 <br/>
 
-[Começar](#instalação) &nbsp;·&nbsp; [Como funciona](#como-funciona) &nbsp;·&nbsp; [Modo Steam](#modo-de-missão-do-steam) &nbsp;·&nbsp; [Uso](#uso) &nbsp;·&nbsp; [Estrutura](#estrutura-do-projeto) &nbsp;·&nbsp; [Legal](#aviso-legal)
+[Inicio](#instalação) &nbsp;·&nbsp; [Como funciona](#como-funciona) &nbsp;·&nbsp; [Modo Steam](#modo-de-missão-do-steam) &nbsp;·&nbsp; [Uso](#uso) &nbsp;·&nbsp; [Estrutura](#estrutura-do-projeto) &nbsp;·&nbsp; [Legal](#aviso-legal)
 
 </div>
 
@@ -32,7 +32,7 @@ Sem modificações. Sem injetar código. A ferramenta trabalha com a identifica�
 
 Alguns jogos utilizam uma verificação adicional relacionada ao Steam. Nesse caso, o modo de missão do Steam cria um `appmanifest_<appid>.acf` e coloca o executável simulado no diretório correspondente.
 
-### Como funciona
+### Como funciona o programa
 
 1. Pesquise o jogo pelo nome.
 2. Selecione o resultado correto.
@@ -74,35 +74,34 @@ O modo Steam acrescenta a criação de um manifesto `appmanifest_<appid>.acf` e 
 
 ## Instalação
 
-1. Instalar o Git
+`1.` Instalar o Git
 
 Baixe o Git para Windows:
 https://git-scm.com/download/win
 
-2. Instalar o Python
+`2.` Instalar o Python
 Baixe o Python:
 https://www.python.org/downloads/windows/
 
 Na instalação, MUITO IMPORTANTE:
-MARQUE : 
-☑ Add Python.exe to PATH
+MARQUE : Add Python.exe to PATH
 
-3. Escolher onde instalar
+`3.` Escolher onde instalar
 
 Eu recomendo colocar na sua pasta de usuário, para evitar erros
 
-3.1 No PoweShell : cd $HOME
+`3.1` No PoweShell : cd $HOME
 
-3.2 git clone https://github.com/rissveil/farmdeorbs.git
+`3.2` git clone https://github.com/rissveil/farmdeorbs.git
 
-3.3 cd farmdeorbs
+`3.3` cd farmdeorbs
 
-3.4 pip install -r requirements.txt
+`3.4` pip install -r requirements.txt
 
-4. Abra o programa
+`4.` Abra o programa
 
-4.1 python orbshacker.py 
-4.2 python -m orbshacker
+`4.1` python orbshacker.py 
+`4.2` python -m orbshacker
 
 MENU DO PROGRAMA : 
 
