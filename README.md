@@ -74,25 +74,37 @@ O modo Steam acrescenta a criação de um manifesto `appmanifest_<appid>.acf` e 
 
 ## Instalação
 
-```bash
-git clone https://github.com/Rissa/farmdeorbs.git
-cd farmdeorbs
-pip install -r requirements.txt
-```
+1. Instalar o Git
 
-## Uso
+Baixe o Git para Windows:
+https://git-scm.com/download/win
 
-```bash
-python orbshacker.py
-```
+2. Instalar o Python
+Baixe o Python:
+https://www.python.org/downloads/windows/
 
-Ou:
+Na instalação, MUITO IMPORTANTE:
+MARQUE : 
+☑ Add Python.exe to PATH
 
-```bash
-python -m orbshacker
-```
+3. Escolher onde instalar
 
-### Opções do menu
+Eu recomendo colocar na sua pasta de usuário, para evitar erros
+
+3.1 No PoweShell : cd $HOME
+
+3.2 git clone https://github.com/rissveil/farmdeorbs.git
+
+3.3 cd farmdeorbs
+
+3.4 pip install -r requirements.txt
+
+4. Abra o programa
+
+4.1 python orbshacker.py 
+4.2 python -m orbshacker
+
+MENU DO PROGRAMA : 
 
 `1` Pesquisar jogos no banco de dados do Discord
 
@@ -168,6 +180,6 @@ Este projeto utiliza a licença **GPL v3**. Consulte o arquivo `LICENSE` para os
 
 <div align="center">
 
-feito por **Rissa**
+Modificado e traduzido por **Rissa**
 
 </div>
