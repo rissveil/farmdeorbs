@@ -14,7 +14,7 @@
 
 <br/>
 
-[Inicio](#instalação) &nbsp;·&nbsp; [Como funciona](#como-funciona) &nbsp;·&nbsp; [Modo Steam](#modo-de-missão-do-steam) &nbsp;·&nbsp; [Uso](#uso) &nbsp;·&nbsp; [Estrutura](#estrutura-do-projeto) &nbsp;·&nbsp; [Legal](#aviso-legal)
+[Inicio](#instalação) &nbsp;·&nbsp; [Como funciona](#como-funciona) &nbsp;·&nbsp; [Modo Steam](#modo-de-missão-do-steam) &nbsp;·&nbsp; [Uso](#uso) &nbsp;·&nbsp; [Estrutura](#estrutura-do-projeto) &nbsp;·&nbsp; [Aviso Legal](#aviso-legal)
 
 </div>
 
