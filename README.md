@@ -1,18 +1,18 @@
 <div align="center">
 
-# orbshacker · Edição PT-BR
+# ORBSHACKER · PT-BR
 
 [![Plataforma](https://img.shields.io/badge/Plataforma-Windows%20Only-555555?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/rissveil/farmdeorbs)
 [![Licença](https://img.shields.io/badge/Licen%C3%A7a-GPL%20v3-c0392b?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](./LICENSE)
 [![Versão](https://img.shields.io/github/v/release/rissveil/farmdeorbs?style=for-the-badge&logo=semanticrelease&color=4ade80&logoColor=white)](https://github.com/rissveil/farmdeorbs/releases)
 
-*Porque ninguém quer instalar centenas de gigabytes só para conseguir alguns orbes.*
+*Ninguém quer instalar jogos só para conseguir orbs.*
 
 [Começar](#instalação) · [Como funciona](#como-funciona) · [Modo Steam](#modo-steam-quest) · [Uso](#como-usar) · [Aviso legal](#aviso-legal)
 
 </div>
 
-## O que é o orbshacker?
+## O que é orbshacker?
 
 O orbshacker é uma ferramenta para Windows que simula processos de jogos para que o Discord os reconheça durante missões de Orbes, sem precisar instalar os jogos correspondentes. A ferramenta consulta a API pública do Discord para obter os nomes de processos esperados, cria cópias de um executável-base com esses nomes e inicia os processos em segundo plano.
 
