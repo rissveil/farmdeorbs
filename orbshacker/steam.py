@@ -90,11 +90,23 @@ def _pick_windows_exe(launch: SteamLaunchMap) -> str | None:
     return None
 
 
+def _resolve_executable(appid: int, installdir: str, launch: SteamLaunchMap) -> str:
+    """Resolve the executable path, including known games with nonstandard launch metadata."""
+    # FC 27 launches through EA's URI, so Steam's launch data does not expose its game EXE.
+    if appid == 4080220:
+        return "fc27.exe"
+
+    executable = _pick_windows_exe(launch)
+    if not executable:
+        executable = installdir.split("/")[-1] + ".exe"
+    return sanitize_relative_path(executable)
+
+
 def fetch_steam_app_info(appid: int) -> SteamAppInfo | None:
     """Fetch app info from SteamCMD API. Returns dict or None on failure."""
     url = f"{config.STEAMCMD_API_URL}/{appid}"
     try:
-        loading_animation(f"Fetching Steam app info for {appid}", 1.2)
+        loading_animation(f"Obtendo informações do jogo na Steam ({appid})", 1.2)
         data = cast(SteamDataMap, fetch_json(url))
 
         data_root = cast(dict[str, SteamDataMap], data.get("data", {}))
@@ -107,11 +119,7 @@ def fetch_steam_app_info(appid: int) -> SteamAppInfo | None:
         raw_installdir = str(app_cfg.get("installdir", raw_name))
         installdir = sanitize_path_segment(raw_installdir) or name
         launch_map = cast(SteamLaunchMap, app_cfg.get("launch", {}))
-        executable = _pick_windows_exe(launch_map)
-
-        if not executable:
-            executable = installdir.split("/")[-1] + ".exe"
-        executable = sanitize_relative_path(executable)
+        executable = _resolve_executable(appid, installdir, launch_map)
 
         depots = cast(dict[str, Any], app_data.get("depots", {}))
         depot_id = next((key for key in depots.keys() if key.isdigit()), None)
@@ -125,14 +133,14 @@ def fetch_steam_app_info(appid: int) -> SteamAppInfo | None:
 def search_steam_games(query: str) -> list[SteamStoreItem]:
     """Pesquisar Steam store. Returns list of {id, name} dicts."""
     try:
-        loading_animation(f"Pesquisaring Steam for '{query}'", 1.0)
+        loading_animation(f"Pesquisando na Steam por '{query}'", 1.0)
         data = cast(dict[str, Any], fetch_json(
             config.STEAM_STORE_SEARCH_URL,
-            params={"term": query, "l": "english", "cc": "US"},
+            params={"term": query, "l": "portuguese", "cc": "BR"},
         ))
         return cast(list[SteamStoreItem], data.get("items", []))
     except NetworkError as e:
-        print_color(f"[!] Erro na pesquisa do Steam: {e}", Colors.YELLOW)
+        print_color(f"[!] Erro na pesquisa da Steam: {e}", Colors.YELLOW)
         return []
 
 
@@ -208,20 +216,20 @@ def generate_appmanifest(appid: int, name: str, installdir: str, steam_path: Pat
         return None
 
 
-# ── Interactive UI for Modo de missão do Steam ───────────────────────────────────────
+# ── Interactive UI for Modo Steam Quest ───────────────────────────────────────
 
 def _resolve_steam_path() -> Path | None:
     """Auto-detect or prompt for Steam path."""
     steam_path = get_steam_path()
     if steam_path and steam_path.exists():
         return steam_path
-    print_color("[!] Não foi possível localizar o Steam automaticamente.", Colors.YELLOW)
+    print_color("[!] Não foi possível localizar a Steam automaticamente.", Colors.YELLOW)
     manual = input(
-        f"{Colors.BOLD}Digite o caminho do Steam manualmente{Colors.RESET}"
-        " (ex.: C:/Program Files (x86)/Steam): "
+        f"{Colors.BOLD}Informe o caminho da Steam manualmente{Colors.RESET}"
+        " (e.g. C:/Program Files (x86)/Steam): "
     ).strip()
     if not manual:
-        print_color("[!] Nenhum caminho do Steam fornecido. Cancelando.", Colors.RED)
+        print_color("[!] Nenhum caminho da Steam informado. Operação cancelada.", Colors.RED)
         return None
     return Path(manual)
 
@@ -231,7 +239,7 @@ def _pick_steam_game(query: str) -> SteamStoreItem | None:
     results = search_steam_games(query)
     if not results:
         print_color(f"\n[ERRO] Nenhum resultado encontrado para '{query}'", Colors.RED)
-        print_color("[!] Tente outro termo de pesquisa", Colors.YELLOW)
+        print_color("[!] Tente pesquisar por outro termo", Colors.YELLOW)
         time.sleep(config.SLEEP_LONG)
         return None
 
@@ -244,7 +252,7 @@ def _pick_steam_game(query: str) -> SteamStoreItem | None:
     print()
 
     raw = input(f"{Colors.BOLD}Selecione [1-{len(results)}]{Colors.RESET} (ou 'voltar'): ").strip()
-    if raw.lower() in ('back', 'b', 'voltar', 'v', ''):
+    if raw.lower() in ('back', 'voltar', 'b', ''):
         return None
     try:
         idx = int(raw)
@@ -259,10 +267,10 @@ def _pick_steam_game(query: str) -> SteamStoreItem | None:
 
 def _prompt_app_info_manually(appid: int) -> SteamAppInfo:
     """Fallback: ask user to type Steam app info."""
-    print_color("[!] Não foi possível obter as informações do aplicativo automaticamente.", Colors.YELLOW)
-    print_color("[*] Digite os detalhes manualmente:", Colors.CYAN)
+    print_color("[!] Não foi possível obter os dados do jogo automaticamente.", Colors.YELLOW)
+    print_color("[*] Informe os dados manualmente:", Colors.CYAN)
     name_raw = input(f"  {Colors.BOLD}Nome do jogo{Colors.RESET}: ").strip() or f"App {appid}"
-    install_raw = input(f"  {Colors.BOLD}Diretório de instalação{Colors.RESET} (pasta dentro de steamapps/common): ").strip() or f"App{appid}"
+    install_raw = input(f"  {Colors.BOLD}Pasta de instalação{Colors.RESET} (pasta steamapps/common): ").strip() or f"App{appid}"
     exe_raw = input(f"  {Colors.BOLD}Executável{Colors.RESET} (ex.: Bin/Game.exe): ").strip() or "Game.exe"
     return {
         "name":       sanitize_filename(name_raw),
@@ -273,20 +281,20 @@ def _prompt_app_info_manually(appid: int) -> SteamAppInfo:
 
 
 def steam_quest_mode(faker: GameFaker) -> None:
-    """Modo de missão do Steam – generates appmanifest + fake exe for any Steam appid."""
-    print_boxed_title("MODO DE MISSÃO DO STEAM", width=55, color=Colors.CYAN)
-    print_color("[*] Este modo gera um appmanifest + executável falsos do Steam", Colors.CYAN)
-    print_color("[*] Necessário para jogos que verificam a propriedade no Steam (Marathon, Toxic Commando…)", Colors.GRAY)
-    print_color("[*] Pesquise pelo nome. Demos e DLCs são separados, então escolha o correto.", Colors.YELLOW)
+    """Modo Steam Quest – generates appmanifest + fake exe for any Steam appid."""
+    print_boxed_title("MODO STEAM QUEST", width=55, color=Colors.CYAN)
+    print_color("[*] Este modo cria um appmanifest e um executável simulados para a Steam.", Colors.CYAN)
+    print_color("[*] Necessário para jogos que verificam informações da Steam (Marathon, Toxic Commando…).", Colors.GRAY)
+    print_color("[*] Pesquise pelo nome. Demos e DLCs aparecem separadamente, então escolha a opção correta.", Colors.YELLOW)
     print()
 
     steam_path = _resolve_steam_path()
     if not steam_path:
         return
-    print_color(f"[OK] Steam encontrado em: {steam_path}", Colors.GREEN)
+    print_color(f"[OK] Steam encontrada em: {steam_path}", Colors.GREEN)
 
     query = input(f"\n{Colors.BOLD}Pesquisar jogo{Colors.RESET} (ou 'voltar'): ").strip()
-    if query.lower() in ('back', 'b', 'voltar', 'v', ''):
+    if query.lower() in ('back', 'voltar', 'b', ''):
         return
 
     game = _pick_steam_game(query)
@@ -299,10 +307,10 @@ def steam_quest_mode(faker: GameFaker) -> None:
 
     print(f"\n{Colors.BOLD}Informações detectadas:{Colors.RESET}")
     print(f"  Nome:        {Colors.CYAN}{info['name']}{Colors.RESET}")
-    print(f"  Diretório de instalação: {Colors.CYAN}{info['installdir']}{Colors.RESET}")
+    print(f"  Pasta de instalação: {Colors.CYAN}{info['installdir']}{Colors.RESET}")
     print(f"  Executável:  {Colors.CYAN}{info['executable']}{Colors.RESET}")
 
-    override = input(f"\n{Colors.BOLD}Substituir caminho do executável?{Colors.RESET} [deixe vazio para manter]: ").strip()
+    override = input(f"\n{Colors.BOLD}Deseja alterar o caminho do executável?{Colors.RESET} [deixe vazio para manter o atual]: ").strip()
     if override:
         info['executable'] = sanitize_relative_path(override)
     info['installdir'] = sanitize_path_segment(info['installdir'])
@@ -311,7 +319,7 @@ def steam_quest_mode(faker: GameFaker) -> None:
     fake_exe_path = steam_path / "steamapps" / "common" / exe_full_path.replace("/", os.sep)
 
     print(f"\n{Colors.BOLD}Resumo:{Colors.RESET}")
-    print(f"  AppManifest: {Colors.GRAY}{steam_path / 'steamapps' / f'appmanifest_{appid}.acf'}{Colors.RESET}")
+    print(f"  Manifesto do aplicativo: {Colors.GRAY}{steam_path / 'steamapps' / f'appmanifest_{appid}.acf'}{Colors.RESET}")
     print(f"  Executável simulado:    {Colors.GRAY}{fake_exe_path}{Colors.RESET}")
 
     if not ask_confirm():
@@ -321,7 +329,7 @@ def steam_quest_mode(faker: GameFaker) -> None:
 
     acf = generate_appmanifest(appid, info['name'], info['installdir'], steam_path, depot_id=info.get('depot_id'))
     if not acf:
-        print_color("[ERRO] Falha ao criar o appmanifest. Cancelando.", Colors.RED)
+        print_color("[ERRO] Falha ao criar o appmanifest. Operação cancelada.", Colors.RED)
         time.sleep(config.SLEEP_SHORT)
         return
 
@@ -342,7 +350,7 @@ def steam_quest_mode(faker: GameFaker) -> None:
 
     print()
     faker.launch_executable(fake_exe_path)
-    print_color("\n[OK] Configuração da missão do Steam concluída!", Colors.GREEN, bold=True)
-    print_color("[!] O Discord DEVE estar em execução para a detecção funcionar.", Colors.YELLOW)
-    print_color("[*] Mantenha o processo em execução até a missão terminar.", Colors.CYAN)
+    print_color("\n[OK] Configuração do modo Steam Quest concluída!", Colors.GREEN, bold=True)
+    print_color("[!] O Discord precisa estar aberto para que a detecção funcione.", Colors.YELLOW)
+    print_color("[*] Mantenha o processo aberto até concluir a missão.", Colors.CYAN)
     input(f"\n{Colors.GRAY}Pressione Enter para continuar...{Colors.RESET}")

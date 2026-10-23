@@ -32,7 +32,7 @@ AUTO_DELETE = False
 TIMER_MINUTES = 15
 STEAM_MANIFEST_PATH = None
 
-class TemporizadorApp:
+class TimerApp:
     def __init__(self, root, minutes=15):
         root.title("Temporizador")
         root.geometry("400x250")
@@ -83,7 +83,7 @@ class TemporizadorApp:
         subprocess.Popen(
             cmd,
             shell=True,
-            creationflags=subprocess.CREATE_NO_WINDOW,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             stdin=subprocess.DEVNULL,
@@ -92,7 +92,7 @@ class TemporizadorApp:
         sys.exit(0)
 
 root = tk.Tk()
-TemporizadorApp(root, TIMER_MINUTES)
+TimerApp(root, TIMER_MINUTES)
 root.mainloop()
 '''
 
@@ -101,7 +101,7 @@ def _is_frozen() -> bool:
     return getattr(sys, 'frozen', False)
 
 
-def _find_source_exe() -> Caminho:
+def _find_source_exe() -> Path:
     """Find the executable to copy for fake game processes."""
     if _is_frozen():
         return Path(sys.executable)  # copy ourselves
@@ -205,13 +205,13 @@ class GameFaker:
             return target_path
         except Exception as e:
             print_color(f"[ERRO] Falha ao criar o executável: {e}", Colors.RED, bold=True)
-            print_color("[!] Verifique as permissões do arquivo ou o espaço em disco", Colors.YELLOW)
+            print_color("[!] Verifique as permissões dos arquivos ou o espaço em disco.", Colors.YELLOW)
             return None
 
     def launch_executable(self, exe_path: Path) -> bool:
         """Launch the fake game process in background."""
         try:
-            loading_animation("Launching process", 0.8)
+            loading_animation("Iniciando o processo", 0.8)
 
             if self._frozen:
                 args = [str(exe_path)]
@@ -248,14 +248,14 @@ class GameFaker:
             self._processes.append(proc)
 
             print_color("[OK] Processo iniciado em segundo plano", Colors.GREEN, bold=True)
-            print_color("[*] O Discord agora deve detectar o jogo (se estiver em execução)", Colors.CYAN)
-            print_color("[!] IMPORTANTE: o Discord DEVE estar em execução para a simulação funcionar", Colors.YELLOW)
-            print_color("[*] Aguarde alguns segundos para o Discord verificar os processos", Colors.GRAY)
-            print_color("[*] DICA: você pode executar esta ferramenta várias vezes para simular vários jogos!", Colors.MAGENTA)
+            print_color("[*] O Discord deve reconhecer o jogo, desde que esteja aberto.", Colors.CYAN)
+            print_color("[!] IMPORTANTE: O Discord precisa estar aberto para que a simulação funcione.", Colors.YELLOW)
+            print_color("[*] Aguarde alguns segundos para o Discord verificar os processos.", Colors.GRAY)
+            print_color("[*] DICA: você pode executar a ferramenta mais de uma vez para simular vários jogos.", Colors.MAGENTA)
             return True
         except Exception as e:
             print_color(f"[!] Falha ao iniciar automaticamente: {e}", Colors.YELLOW)
-            print_color(f"[*] Você pode executar manualmente: {exe_path}", Colors.CYAN)
+            print_color(f"[*] Você pode iniciar manualmente: {exe_path}", Colors.CYAN)
             return False
 
     def cleanup(self) -> None:
@@ -263,7 +263,7 @@ class GameFaker:
         if not config.AUTO_DELETE:
             return
 
-        print_color("\n[*] AUTO_DELETE ativado. Limpando processos e arquivos simulados...", Colors.CYAN)
+        print_color("\n[*] AUTO_DELETE ativado. Removendo os processos e arquivos simulados...", Colors.CYAN)
 
         # 1. Terminate all launched processes
         for proc in self._processes:
@@ -293,7 +293,7 @@ class GameFaker:
                 except Exception:
                     time.sleep(0.2)
             if not deleted and file_path.exists():
-                print_color(f"[!] Falha ao excluir: {file_path} (o arquivo está bloqueado)", Colors.YELLOW)
+                print_color(f"[!] Falha ao excluir {file_path} (o arquivo está em uso).", Colors.YELLOW)
 
         # 3. Clean up empty parent directories (deepest first)
         sorted_dirs = sorted(self._created_dirs, key=lambda p: len(p.parts), reverse=True)
@@ -310,12 +310,12 @@ class GameFaker:
 def manual_mode(faker: GameFaker) -> None:
     """Manual mode – user types an exact process name to fake."""
     print_boxed_title("MODO MANUAL", width=50, color=Colors.CYAN)
-    print_color("[*] Digite o nome exato do processo que o Discord espera", Colors.CYAN)
-    print_color("[*] Exemplos:", Colors.GRAY)
+    print_color("[*] Informe o nome exato do processo esperado pelo Discord.", Colors.CYAN)
+    print_color("[*] Examples:", Colors.GRAY)
     print_color("    • TslGame.exe (PUBG)", Colors.GRAY)
     print_color("    • League of Legends.exe (LoL)", Colors.GRAY)
     print_color("    • Overwatch.exe", Colors.GRAY)
-    print_color("[*] Certifique-se de que o nome corresponde exatamente (diferencia maiúsculas e minúsculas em alguns sistemas)", Colors.GRAY)
+    print_color("[*] Confira se o nome corresponde exatamente; alguns sistemas diferenciam maiúsculas de minúsculas.", Colors.GRAY)
     print()
 
     exe_name = input(f"{Colors.BOLD}Nome do executável{Colors.RESET} (ou 'voltar'): ").strip()
@@ -336,6 +336,6 @@ def manual_mode(faker: GameFaker) -> None:
         print()
         faker.launch_executable(result)
         print_color("\n[OK] Configuração concluída!", Colors.GREEN, bold=True)
-        print_color("[!] IMPORTANTE: o Discord DEVE estar em execução para a simulação funcionar", Colors.YELLOW)
+        print_color("[!] IMPORTANTE: O Discord precisa estar aberto para que a simulação funcione.", Colors.YELLOW)
 
     input(f"\n{Colors.GRAY}Pressione Enter para continuar...{Colors.RESET}")

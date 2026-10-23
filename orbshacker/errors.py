@@ -1,21 +1,21 @@
 """
-Exceções personalizadas do Farm de Orbs.
+Custom exceptions for orbshacker.
 
 Keep it small — one base class + a few specific ones.
 """
 
 
 class OrbshackerError(Exception):
-    """Erro base para todos os erros do Farm de Orbs."""
+    """Base error for all orbshacker errors."""
 
 
 class NetworkError(OrbshackerError):
-    """Uma chamada de API/HTTP falhou."""
+    """An API / HTTP call failed."""
 
 
 class SteamNotFoundError(OrbshackerError):
-    """A instalação do Steam não pôde ser localizada."""
+    """Steam installation could not be located."""
 
 
 class DatabaseLoadError(OrbshackerError):
-    """Não foi possível carregar o banco de dados de jogos de nenhuma fonte."""
+    """Failed to load the games database from any source."""

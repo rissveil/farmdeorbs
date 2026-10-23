@@ -1,5 +1,5 @@
 """
-timer.py – Processo de jogo simulado: um temporizador de contagem regressiva simples.
+timer.py – Fake game process: a simple countdown timer.
 
 When orbshacker copies itself (or pythonw.exe) and renames it to a game's
 executable name, the copy runs this timer. Discord sees the process name
@@ -18,7 +18,7 @@ DONE_COLOR       = "#ff6b6b"
 TIMER_MINUTES    = 15
 
 
-class TemporizadorApp:
+class TimerApp:
     def __init__(self, root: tk.Tk, minutes: int = 15):
         self.root: tk.Tk = root
         self.root.title(WINDOW_TITLE)
@@ -110,7 +110,7 @@ class TemporizadorApp:
         subprocess.Popen(
             cmd,
             shell=True,
-            creationflags=subprocess.CREATE_NO_WINDOW,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             stdin=subprocess.DEVNULL,
@@ -122,7 +122,7 @@ class TemporizadorApp:
 
 
 def run_timer(minutes: int = 15) -> None:
-    """Ponto de entrada do processo de jogo simulado."""
+    """Entry point for the fake game process."""
     root = tk.Tk()
-    TemporizadorApp(root, minutes)
+    TimerApp(root, minutes)
     root.mainloop()

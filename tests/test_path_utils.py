@@ -40,7 +40,7 @@ class TestSanitizeFilename:
         assert sanitize_filename(":::***") == "unnamed"
 
 
-class TestSanitizeRelativeCaminho:
+class TestSanitizeRelativePath:
     def test_multi_segment_with_illegal_chars(self):
         result = sanitize_relative_path("NieR:Automata™/bin:x64/Game®.exe")
         assert result == "NieRAutomata/binx64/Game.exe"

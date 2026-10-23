@@ -1,5 +1,5 @@
 """
-main.py – Ponto de entrada e loop principal da aplicação.
+main.py – Application entry point and main loop.
 """
 
 import os
@@ -17,14 +17,14 @@ from .errors import DatabaseLoadError
 
 
 def main() -> None:
-    """Loop principal da aplicação."""
+    """Main application loop."""
     try:
         auto_update()
     except Exception:
         pass
 
     print_banner()
-    print_color("Inicializando o Farm de Orbs...", Colors.CYAN)
+    print_color("Inicializando o orbshacker...", Colors.CYAN)
     print_color("[*] Conectando à API do Discord...", Colors.GRAY)
 
     try:
@@ -34,7 +34,7 @@ def main() -> None:
         sys.exit(1)
 
     faker = GameFaker()
-    print_color("[OK] Pronto para simular alguns jogos!", Colors.GREEN)
+    print_color("[OK] Tudo pronto para simular os jogos!", Colors.GREEN)
     time.sleep(0.5)
 
     try:
@@ -51,7 +51,7 @@ def main() -> None:
                     print_color(f"   Banco de dados ativo: {db.source} ({len(db.games)} jogos)", Colors.GRAY)
 
                 print_menu()
-                choice = input(f"{Colors.BOLD}Selecione uma opção{Colors.RESET} [1-5]: ").strip()
+                choice = input(f"{Colors.BOLD}Escolha uma opção{Colors.RESET} [1-5]: ").strip()
 
                 if choice == '1':
                     database_mode(db, faker)
@@ -62,17 +62,17 @@ def main() -> None:
                 elif choice == '4':
                     show_credits()
                 elif choice == '5':
-                    print_color(f"\n[*] Obrigado por usar o Farm de Orbs!", Colors.CYAN, bold=True)
+                    print_color(f"\n[*] Obrigado por usar o orbshacker!", Colors.CYAN, bold=True)
                     print_color(f"[*] Desenvolvido por {config.DEVELOPER}", Colors.GRAY)
                     print_color("\n[*] Que seus orbes sejam abundantes!", Colors.MAGENTA)
                     break
                 else:
-                    print_color("\n[ERRO] Opção inválida - tente 1, 2, 3, 4 ou 5", Colors.RED)
+                    print_color("\n[ERRO] Opção inválida. Escolha 1, 2, 3, 4 ou 5", Colors.RED)
                     time.sleep(config.SLEEP_SHORT)
 
             except KeyboardInterrupt:
                 print_color("\n\n[!] Interrompido pelo usuário", Colors.YELLOW)
-                print_color("[*] Obrigado por usar o Farm de Orbs!\n", Colors.CYAN)
+                print_color("[*] Obrigado por usar o orbshacker!\n", Colors.CYAN)
                 break
     finally:
         faker.cleanup()

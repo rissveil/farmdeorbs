@@ -1,5 +1,5 @@
 """
-ui.py – Auxiliares da interface do terminal: cores, banners, animações, menus e créditos.
+ui.py – Terminal UI helpers: colors, banners, animations, menus, credits.
 """
 
 import sys
@@ -28,7 +28,7 @@ def print_color(text: str, color: str = Colors.WHITE, bold: bool = False) -> Non
 
 
 def print_boxed_title(title: str, width: int = 50, color: str = Colors.CYAN) -> None:
-    """Exibe um título dentro de uma caixa com bordas ASCII."""
+    """Print a boxed title with ASCII borders."""
     border = f"{Colors.BOLD}{color}{'+' + '-' * (width - 2) + '+'}{Colors.RESET}"
     title_padding = (width - len(title) - 4) // 2
     extra_space = (width - len(title) - 4) % 2
@@ -44,28 +44,25 @@ def print_boxed_title(title: str, width: int = 50, color: str = Colors.CYAN) -> 
 
 
 def print_banner() -> None:
-    """Exibe o banner do programa."""
-    banner = rf"""
+    """Display ASCII banner."""
+    banner = f"""
 {Colors.CYAN}{Colors.BOLD}
- _______                    _              _        ____            _     
-|__   __|                  | |            | |      |  _ \          | |    
-   | | ___ _ __ ___  _ __  | |__   ___  __| | ___ | |_) | ___ _ __ | |___ 
-   | |/ _ \\ '_ ` _ \\| '_ \\ | '_ \\ / _ \\/ _` |/ _ \\|  _ < / _ \\ '_ \\| / __|
-   | |  __/ | | | | | | | | | |_) |  __/ (_| | (_) | |_) |  __/ | | | | \\__ \\
-   |_|\\___|_| |_| |_|_| |_| |_.__/ \\___|\\__,_|\\___/|____/ \\___|_| |_|_|___/
-
+                                                                
+ _____ _____ _____ _____    _____ _____ _____ _____ _____ _____ 
+|     | __  | __  |   __|  |  |  |  _  |     |  |  |   __| __  |
+|  |  |    -| __ -|__   |  |     |     |   --|    -|   __|    -|
+|_____|__|__|_____|_____|  |__|__|__|__|_____|__|__|_____|__|__|
+                                                                
 {Colors.RESET}
-    {Colors.GRAY}Projeto: {Colors.CYAN}Farm de Orbs{Colors.RESET}
-    {Colors.GRAY}Desenvolvedora: {Colors.CYAN}{config.DEVELOPER}{Colors.RESET}
+    {Colors.GRAY}Responsável: {Colors.CYAN}{config.DEVELOPER}{Colors.RESET}
     {Colors.GRAY}Versão: {Colors.WHITE}{config.VERSION}{Colors.RESET}
-    {Colors.GRAY}Banco de dados: {Colors.GREEN}API oficial do Discord + arquivo de backup do GitHub{Colors.RESET}
+    {Colors.GRAY}Banco de dados: {Colors.GREEN}Discord API + Steam API{Colors.RESET}
 """
-
     print(banner)
 
 
 def loading_animation(text: str, duration: float = 1.5) -> None:
-    """Exibe uma animação de carregamento."""
+    """Display loading animation."""
     frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
     ascii_frames = ["|", "/", "-", "\\"]
     end_time = time.time() + duration
@@ -92,72 +89,73 @@ def loading_animation(text: str, duration: float = 1.5) -> None:
 
 
 def ask_confirm(prompt: str = "Criar e iniciar?") -> bool:
-    """Solicita uma confirmação S/n. Retorna True se o usuário confirmar."""
+    """Ask a Y/n confirmation question. Returns True if user confirms."""
     answer = input(f"\n{Colors.BOLD}{prompt}{Colors.RESET} [S/n]: ").strip().lower()
     return answer in ('', 's', 'sim', 'y', 'yes')
 
 
 def print_menu() -> None:
-    """Exibe o menu principal."""
+    """Display main menu."""
     print_boxed_title("MENU PRINCIPAL", width=50, color=Colors.CYAN)
-    print(f"  {Colors.BOLD}{Colors.GREEN}1.{Colors.RESET} Pesquisar banco de dados do Discord (API oficial)")
+    print(f"  {Colors.BOLD}{Colors.GREEN}1.{Colors.RESET} Pesquisar no banco de jogos do Discord (API oficial)")
     print(f"  {Colors.BOLD}{Colors.GREEN}2.{Colors.RESET} Modo manual (executável personalizado)")
-    print(f"  {Colors.BOLD}{Colors.YELLOW}3.{Colors.RESET} Modo de missão do Steam  {Colors.YELLOW}[NOVO - para Marathon, Toxic Commando…]{Colors.RESET}")
+    print(f"  {Colors.BOLD}{Colors.YELLOW}3.{Colors.RESET} Modo Steam Quest  {Colors.YELLOW}[NOVO: para Marathon, Toxic Commando…]{Colors.RESET}")
     print(f"  {Colors.BOLD}{Colors.GREEN}4.{Colors.RESET} Créditos e informações")
     print(f"  {Colors.BOLD}{Colors.RED}5.{Colors.RESET} Sair\n")
 
 
 def show_credits() -> None:
-    """Exibe os créditos."""
+    """Display credits."""
     print_boxed_title("CRÉDITOS", width=65, color=Colors.CYAN)
     credits_text = f"""
-    {Colors.BOLD}Desenvolvedor:{Colors.RESET} {Colors.CYAN}{config.DEVELOPER}{Colors.RESET}
+    {Colors.BOLD}Responsável:{Colors.RESET} {Colors.CYAN}{config.DEVELOPER}{Colors.RESET}
     {Colors.BOLD}Versão:{Colors.RESET}   {Colors.WHITE}{config.VERSION}{Colors.RESET}
 
     {Colors.BOLD}Descrição:{Colors.RESET}
-    Esta ferramenta simula processos de jogos. Ela faz o Discord pensar que
-    um jogo está em execução ao criar processos simulados com os
-    nomes exatos que o Discord espera.
+    Esta ferramenta simula processos de jogos para que o Discord pense
+    que um jogo está em execução, criando processos com os
+    nomes exatos esperados pelo Discord.
     
-    {Colors.BOLD}IMPORTANTE:{Colors.RESET} {Colors.RED}o Discord DEVE estar em execução para isso funcionar!{Colors.RESET}
+    {Colors.BOLD}IMPORTANTE:{Colors.RESET} {Colors.RED}O Discord precisa estar aberto para que isso funcione!{Colors.RESET}
     
-    {Colors.BOLD}Como funciona (simulação de jogos):{Colors.RESET}
-    1. Conecta-se à API oficial do Discord para obter a lista atualizada de jogos
-    2. Encontra o nome exato do processo esperado pelo Discord para cada jogo
-    3. Copia o executável para Desktop/Win64/ e renomeia para corresponder
+    {Colors.BOLD}Como funciona (simulação de processos):{Colors.RESET}
+    1. Consulta a API oficial do Discord para obter a lista atualizada de jogos
+    2. Encontra o nome de processo esperado pelo Discord para cada jogo
+    3. Copia o executável para Desktop/Win64/ e altera seu nome para corresponder ao jogo
     4. Inicia o processo simulado em segundo plano
-    5. O Discord verifica os processos em execução e detecta o nome simulado
-    6. O Discord entende que você está jogando (correspondência do processo)
-    7. O processo simulado precisa continuar em execução para ser detectado
+    5. O Discord verifica os processos em execução e encontra o nome simulado
+    6. O Discord interpreta que o jogo está aberto porque o nome do processo corresponde
+    7. O processo simulado precisa continuar aberto para ser detectado pelo Discord
     
-    {Colors.BOLD}Modo de missão do Steam:{Colors.RESET}
-    Alguns jogos (Marathon, Toxic Commando...) exigem que o Discord verifique
-    se o Steam iniciou pelo menos parte do download.
-    O modo de missão do Steam contorna essa verificação:
-    1. Obtém automaticamente as informações do aplicativo pela API pública do SteamCMD
-    2. Gera um appmanifest_<appid>.acf simulado na pasta steamapps/
-    3. Coloca o executável simulado diretamente em steamapps/common/<installdir>/
-    O Discord encontra um manifesto válido do Steam e um processo em execução, ativando a missão.
+    {Colors.BOLD}Modo Steam Quest (NOVO):{Colors.RESET}
+    Alguns jogos (como Marathon e Toxic Commando) exigem que o Discord verifique
+    se a Steam iniciou o download do jogo.
+    O modo Steam Quest tenta contornar essa verificação:
+    1. Obtendo automaticamente os dados do jogo pela API pública do SteamCMD
+    2. Gerando um arquivo appmanifest_<appid>.acf na pasta steamapps/
+    3. Colocando o executável simulado em steamapps/common/<installdir>/
+    O Discord pode encontrar o manifesto e o processo em execução e reconhecer a missão.
     
     {Colors.BOLD}Fontes do banco de dados:{Colors.RESET}
-    • Principal: API oficial do Discord
-    • Backup: arquivo do GitHub mantido por Cynosphere
+    • Discord API: consulta a lista de jogos detectáveis
+    • Steam API: pesquisa jogos e obtém metadados para o modo Steam Quest
+    • Cópia de segurança: usada caso a fonte principal esteja indisponível
     
-    {Colors.BOLD}Dicas importantes:{Colors.RESET}
-    • Use o modo de missão do Steam para jogos não detectados pelos modos 1 ou 2
-    • Encontre AppIDs no SteamDB
-    • O processo simulado precisa permanecer em execução para o Discord detectá-lo
+    {Colors.BOLD}Dicas:{Colors.RESET}
+    • Use o modo Steam Quest para jogos que não funcionam nos modos 1 ou 2
+    • Consulte os AppIDs em https://steamdb.info
+    • O processo simulado precisa permanecer aberto para ser detectado pelo Discord
     
     {Colors.BOLD}{Colors.GREEN}Simulação de vários jogos:{Colors.RESET}
-    • Execute esta ferramenta várias vezes para simular vários jogos ao mesmo tempo
-    • Conclua todas as missões de Orbes simultaneamente em apenas 15 minutos
+    • Use a ferramenta para manter mais de um processo simulado em execução
+    • As missões podem exigir cerca de 15 minutos, conforme as regras de cada uma
     
-    {Colors.BOLD}{Colors.RED}AVISO - APENAS PARA FINS EDUCACIONAIS{Colors.RESET}
-    • Os usuários são os únicos responsáveis por cumprir os Termos de Serviço do Discord
-    • A desenvolvedora não se responsabiliza por quaisquer consequências
-    • Use por sua própria conta e risco
+    {Colors.BOLD}{Colors.RED}AVISO: APENAS PARA FINS EDUCACIONAIS{Colors.RESET}
+    • Cada usuário é responsável por respeitar os termos de serviço do Discord
+    • Os responsáveis pelo projeto não se responsabilizam por consequências do uso
+    • Use por sua conta e risco
     
-    {Colors.GRAY}Feito por {config.DEVELOPER}{Colors.RESET}
+    {Colors.GRAY}Desenvolvido por {config.DEVELOPER}{Colors.RESET}
     {Colors.GRAY}Pressione Enter para voltar ao menu...{Colors.RESET}
 """
     print(credits_text)

@@ -170,7 +170,7 @@ def test_is_faked_game():
 
 
 def test_timer_self_destruction(tmp_path):
-    from orbshacker.timer import TemporizadorApp
+    from orbshacker.timer import TimerApp
     import orbshacker.config as config
 
     with patch("orbshacker.config.AUTO_DELETE", True), \
@@ -178,9 +178,9 @@ def test_timer_self_destruction(tmp_path):
 
         root = MagicMock()
 
-        # Instantiate TemporizadorApp without running _tick
-        with patch.object(TemporizadorApp, "_tick"):
-            app = TemporizadorApp(root, minutes=15)
+        # Instantiate TimerApp without running _tick
+        with patch.object(TimerApp, "_tick"):
+            app = TimerApp(root, minutes=15)
 
         # Mock files next to executable
         exe_path = tmp_path / "Win64" / "TslGame.exe"

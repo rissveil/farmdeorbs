@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Ponto de entrada compatível com versões anteriores.
+Backward-compatible entry point.
 
 Usage:
     python orbshacker.py         (main menu)
@@ -26,9 +26,9 @@ if sys.stdin is None:
 
 
 def is_faked_game() -> bool:
-    """Verifica se o executável/script atual é uma cópia de jogo simulada."""
+    """Check if the currently running executable/script is a faked game copy."""
     if getattr(sys, "frozen", False):
-        name = Path(sys.executable).name.lower()
+        name = Path(str(sys.executable).replace(chr(92), "/")).name.lower()
         return name != "orbshacker.exe"
     else:
         name = Path(sys.argv[0]).name.lower()
@@ -75,7 +75,7 @@ if __name__ == "__main__":
             print_color("\n\n[!] Interrompido", Colors.YELLOW)
             sys.exit(0)
         except Exception as e:
-            print_color(f"\n[ERRO] Erro fatal: {e}", Colors.RED, bold=True)
+            print_color(f"\n[ERROR] Erro fatal: {e}", Colors.RED, bold=True)
             import traceback
             traceback.print_exc()
             input("\nPressione Enter para sair...")

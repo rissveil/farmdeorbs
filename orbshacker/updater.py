@@ -1,5 +1,5 @@
 """
-updater.py – Atualização automática pelas versões do GitHub.
+updater.py – Auto-update from GitHub Releases.
 
 Only runs when the app is a compiled executable (sys.frozen).
 Compares the current VERSION against the latest GitHub Release tag.
@@ -70,17 +70,17 @@ def _schedule_delete(path: Path) -> None:
 
 
 def is_frozen() -> bool:
-    """Retorna True quando o programa está sendo executado como um executável compilado (por exemplo, PyInstaller)."""
+    """Return True if running as a compiled executable (e.g. PyInstaller)."""
     return getattr(sys, 'frozen', False)
 
 
-def _parse_version(tag: str) -> Versão:
+def _parse_version(tag: str) -> Version:
     """Parse a version tag like 'v2.1.0' or '2.1.0' into a Version object."""
     return Version(tag.lstrip('v'))
 
 
 def _get_latest_release() -> GitHubRelease | None:
-    """Obtém as informações da versão mais recente pela API do GitHub.
+    """Fetch the latest release info from the GitHub API.
     Returns dict with 'tag_name' and 'assets' or None on failure.
     """
     url = f"https://api.github.com/repos/{config.GITHUB_REPO_OWNER}/{config.GITHUB_REPO_NAME}/releases/latest"
@@ -93,7 +93,7 @@ def _get_latest_release() -> GitHubRelease | None:
 
 
 def _find_exe_asset(assets: list[ReleaseAsset]) -> ReleaseAsset | None:
-    """Encontra o executável .exe disponível em uma versão."""
+    """Find the .exe download asset from a release."""
     for asset in assets:
         name = asset.get('name', '')
         if name.lower().endswith('.exe'):
@@ -102,7 +102,7 @@ def _find_exe_asset(assets: list[ReleaseAsset]) -> ReleaseAsset | None:
 
 
 def _download_file(url: str, dest: Path) -> None:
-    """Baixa um arquivo da URL para o caminho de destino."""
+    """Download a file from url to dest path."""
     resp = requests.get(url, stream=True, timeout=config.REQUEST_TIMEOUT_LONG)
     resp.raise_for_status()
     with open(dest, 'wb') as f:
@@ -133,7 +133,7 @@ def _replace_exe(new_exe: Path) -> None:
     try:
         os.rename(current_exe, old_exe)
         new_exe.rename(current_exe)
-        ui.print_color(f"[ATUALIZAÇÃO] Atualizado para a nova versão!", ui.Colors.GREEN, bold=True)
+        ui.print_color(f"[ATUALIZAÇÃO] Atualização instalada com sucesso!", ui.Colors.GREEN, bold=True)
         ui.print_color("[ATUALIZAÇÃO] Reiniciando...", ui.Colors.CYAN)
 
         # Launch the new exe and exit
@@ -154,7 +154,7 @@ def auto_update() -> None:
     Skips silently when running from source.
     """
     if not is_frozen():
-        return  # Em execução pelo código-fonte; atualização ignorada
+        return  # Em execução from source – skip update entirely
 
     _cleanup_old_exe(Path(sys.executable).with_suffix('.old'))
 
@@ -173,17 +173,17 @@ def auto_update() -> None:
     try:
         remote_version = _parse_version(tag)
         local_version = _parse_version(config.VERSION)
-    except InvalidVersão:
+    except InvalidVersion:
         return
 
     if remote_version <= local_version:
-        ui.print_color(f"[ATUALIZAÇÃO] Você está usando a versão mais recente (v{config.VERSION})", ui.Colors.CYAN)
+        ui.print_color(f"[ATUALIZAÇÃO] Você já está usando a versão mais recente (v{config.VERSION})", ui.Colors.CYAN)
         return
 
     # 3. Find exe download
     asset = _find_exe_asset(release.get('assets', []))
     if not asset:
-        ui.print_color(f"[ATUALIZAÇÃO] v{tag} disponível, mas nenhum .exe foi encontrado na versão", ui.Colors.YELLOW)
+        ui.print_color(f"[ATUALIZAÇÃO] A versão {tag} está disponível, mas não há arquivo .exe na publicação", ui.Colors.YELLOW)
         ui.print_color(f"[ATUALIZAÇÃO] Baixe manualmente: {config.REPO_URL}/releases/latest", ui.Colors.GRAY)
         return
 

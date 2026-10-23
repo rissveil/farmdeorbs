@@ -1,184 +1,124 @@
 <div align="center">
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0a0a0a,60:0d1f0d,100:1a4a1a&height=200&section=header&text=Farm%20de%20Orbs&fontSize=60&fontColor=4ade80&fontAlignY=55&animation=fadeIn" width="100%"/>
 
-<br/>
+# orbshacker · Edição PT-BR
 
-[![Python](https://img.shields.io/badge/Python-3.7+-3572A5?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![Plataforma](https://img.shields.io/badge/Plataforma-Windows%20Only-555555?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/Rissa/farm-de-orbs)
-[![Discord](https://img.shields.io/badge/Discord-Missões%20de%20Orbes-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com)
-[![Licença](https://img.shields.io/badge/Licença-GPL%20v3-c0392b?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](./LICENSE)
+[![Plataforma](https://img.shields.io/badge/Plataforma-Windows%20Only-555555?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/rissveil/farmdeorbs)
+[![Licença](https://img.shields.io/badge/Licen%C3%A7a-GPL%20v3-c0392b?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](./LICENSE)
+[![Versão](https://img.shields.io/github/v/release/rissveil/farmdeorbs?style=for-the-badge&logo=semanticrelease&color=4ade80&logoColor=white)](https://github.com/rissveil/farmdeorbs/releases)
 
-<br/>
+*Porque ninguém quer instalar centenas de gigabytes só para conseguir alguns orbes.*
 
-*para aqueles que não conseguem instalar jogos pesados ou simplesmente não querem.*
-
-<br/>
-
-[Inicio](#instalação) &nbsp;·&nbsp; [Como funciona](#como-funciona) &nbsp;·&nbsp; [Modo Steam](#modo-de-missão-do-steam) &nbsp;·&nbsp; [Uso](#uso) &nbsp;·&nbsp; [Estrutura](#estrutura-do-projeto) &nbsp;·&nbsp; [Aviso Legal](#aviso-legal)
+[Começar](#instalação) · [Como funciona](#como-funciona) · [Modo Steam](#modo-steam-quest) · [Uso](#como-usar) · [Aviso legal](#aviso-legal)
 
 </div>
 
-<br/>
+## O que é o orbshacker?
 
-## O que é ?
+O orbshacker é uma ferramenta para Windows que simula processos de jogos para que o Discord os reconheça durante missões de Orbes, sem precisar instalar os jogos correspondentes. A ferramenta consulta a API pública do Discord para obter os nomes de processos esperados, cria cópias de um executável-base com esses nomes e inicia os processos em segundo plano.
 
-**Farm de Orbs** é uma ferramenta para Windows que cria processos de jogos simulados para missões de Orbes do Discord sem instalar os jogos. Ela consulta a API pública do Discord para obter os nomes exatos dos processos, copia um executável, renomeia-o e o inicia em segundo plano. O Discord verifica a lista de processos e reconhece o processo correspondente à missão.
+> **Uso educacional.** Este projeto é disponibilizado para estudo do funcionamento da detecção de jogos do Discord e de técnicas de manipulação de processos. Use por sua conta e risco e respeite os termos de serviço aplicáveis. O uso pode contrariar as regras da plataforma.
 
-Sem modificações. Sem injetar código. A ferramenta trabalha com a identificação do processo.
+## Modo Steam Quest
 
-> **Apenas para fins educacionais.** Use por sua conta e risco e respeite os termos de serviço da plataforma.
+Alguns jogos exigem uma verificação adicional: além do nome do processo, o Discord pode conferir informações de instalação da Steam. O modo Steam Quest tenta reproduzir os arquivos locais que essa verificação procura.
 
-## Modo de missão do Steam
+### Como funciona
 
-Alguns jogos utilizam uma verificação adicional relacionada ao Steam. Nesse caso, o modo de missão do Steam cria um `appmanifest_<appid>.acf` e coloca o executável simulado no diretório correspondente.
+Você pesquisa o jogo pelo nome dentro da ferramenta. Ela consulta metadados públicos da Steam, identifica informações como a pasta de instalação e o executável e tenta obter automaticamente o ID da conta Steam pelo Registro do Windows. Em seguida, gera um arquivo `appmanifest_<appid>.acf` e coloca um executável com o nome esperado na pasta correspondente.
 
-### Como funciona o programa
-
-1. Pesquise o jogo pelo nome.
-2. Selecione o resultado correto.
-3. A ferramenta obtém as informações do aplicativo.
-4. Um manifest do Steam é criado na pasta `steamapps/`.
-5. O executável simulado é colocado na pasta correspondente.
-6. Ao terminar, a ferramenta limpa os arquivos criados.
-
-**Compatível com jogos que exigem manifest do Steam.**
-
-> **Dica:** demos e jogos completos podem possuir AppIDs diferentes. Sempre selecione o resultado correto.
+**Observação:** o método pode deixar de funcionar se o Discord ou a Steam alterarem seus mecanismos de verificação. Jogos, demos e DLCs podem ter IDs diferentes.
 
 ## Recursos
 
-- **Detecção automática de jogos:** obtém a lista atualizada de jogos detectáveis pela API do Discord.
-- **Pesquisa por nome ou abreviação:** facilita encontrar jogos rapidamente.
+- **Busca automática de jogos:** consulta a lista pública de jogos detectáveis pelo Discord e permite pesquisar por nome ou abreviação.
 - **Modo manual:** permite informar um nome de executável personalizado.
-- **Modo de missão do Steam:** cria os arquivos necessários para jogos que possuem uma verificação adicional.
-- **Temporizador integrado:** mantém o processo simulado em execução pelo período configurado.
-- **Exclusão automática:** remove arquivos simulados ao terminar, quando `AUTO_DELETE` está ativado.
-- **Vários jogos:** permite executar processos simulados para diferentes jogos ao mesmo tempo.
-- **Banco de dados de backup:** utiliza uma fonte alternativa caso a API principal esteja indisponível.
-- **Interface de terminal:** menu simples com cores e animações.
-
-## Como funciona
-
-A ferramenta consulta a API oficial do Discord para obter os jogos detectáveis e seus nomes de processo. Ao selecionar um jogo, o programa cria uma cópia do executável e a renomeia de acordo com o processo esperado.
-
-Quando o processo simulado é iniciado, ele mantém um temporizador em execução. O objetivo é permitir que o Discord encontre o nome do processo durante o período da missão.
-
-O modo Steam acrescenta a criação de um manifesto `appmanifest_<appid>.acf` e o posicionamento do executável dentro da estrutura `steamapps/common/`.
+- **Modo Steam Quest:** pesquisa jogos na Steam e gera os arquivos locais usados pelo método.
+- **Temporizador:** mantém o processo simulado em execução pelo período configurado.
+- **Limpeza automática opcional:** pode remover os arquivos criados pela ferramenta quando o temporizador termina.
+- **Integração com APIs:** utiliza a API do Discord para consultar jogos detectáveis e a API da Steam para buscar informações dos jogos no modo Steam Quest.
+- **Interface no terminal:** menus, mensagens coloridas e indicadores de carregamento.
 
 ## Requisitos
 
-- Windows
-- Python 3.7 ou superior
-- Conexão com a internet
-- Discord em execução durante a missão
+- Windows.
+- Python compatível com as dependências do projeto, caso execute a partir do código-fonte.
+- Conexão com a internet para consultar as APIs.
+- Discord em execução para que a detecção de processos possa ocorrer.
 
 ## Instalação
 
-`1.` Instalar o Git
+Clone o repositório e instale as dependências:
 
-Baixe o Git para Windows:
-https://git-scm.com/download/win
+```bash
+git clone https://github.com/rissveil/farmdeorbs.git
+cd farmdeorbs
+pip install -r requirements.txt
+```
 
-`2.` Instalar o Python
-Baixe o Python:
-https://www.python.org/downloads/windows/
+## Como usar
 
-Na instalação, MUITO IMPORTANTE:
-MARQUE : Add Python.exe to PATH
+Execute pelo Python:
 
-`3.` Escolher onde instalar
+```bash
+python orbshacker.py
+```
 
-Eu recomendo colocar na sua pasta de usuário, para evitar erros
+Ou use o ponto de entrada do pacote:
 
-`3.1` No PoweShell : cd $HOME
+```bash
+python -m orbshacker
+```
 
-`3.2` git clone https://github.com/rissveil/farmdeorbs.git
+### Opções do menu
 
-`3.3` cd farmdeorbs
+1. Pesquisar no banco de jogos do Discord.
+2. Usar o modo manual e informar um nome de executável.
+3. Abrir o modo Steam Quest.
+4. Consultar os créditos e as informações do projeto.
+5. Sair.
 
-`3.4` pip install -r requirements.txt
+### Configurações
 
-`4.` Abra o programa
+As opções editáveis ficam em `settings.py`, na raiz do projeto. Entre elas estão a pasta de destino, a remoção automática dos arquivos criados e a duração do temporizador. Confira as configurações antes de usar a ferramenta.
 
-`4.1` python orbshacker.py 
-`4.2` python -m orbshacker
+## Como funciona
 
-MENU DO PROGRAMA : 
+A ferramenta consulta o endpoint público de jogos detectáveis do Discord e procura o nome de processo associado ao jogo selecionado. Depois, copia o executável-base para a pasta configurada e usa o nome esperado pelo Discord. No modo Steam Quest, também tenta criar um manifesto local na pasta da Steam.
 
-`1` Pesquisar jogos no banco de dados do Discord
-
-`2` Usar o modo manual
-
-`3` Usar o modo de missão do Steam
-
-`4` Ver créditos e informações
-
-`5` Sair
-
-### Concluindo várias missões
-
-1. Abra a ferramenta.
-2. Escolha um jogo.
-3. Aguarde o processo ser iniciado.
-4. Volte ao menu.
-5. Escolha outro jogo.
-6. Repita conforme necessário.
-7. Mantenha os processos em execução durante o período da missão.
+Os nomes de arquivos, caminhos, respostas das APIs e versões da plataforma podem mudar. Portanto, não há garantia de que o método funcione com todos os jogos ou continue funcionando após atualizações.
 
 ## Estrutura do projeto
 
 ```text
-farm-de-orbs/
-├── orbshacker.py
+orbshacker/
+├── orbshacker.py          Ponto de entrada
 ├── orbshacker/
-│   ├── __init__.py
-│   ├── __main__.py
-│   ├── config.py
-│   ├── faker.py
-│   ├── discord_db.py
-│   ├── steam.py
-│   ├── updater.py
-│   ├── net.py
-│   ├── ui.py
-│   └── errors.py
-├── tests/
-├── settings.py
-├── requirements.txt
-└── .github/
-    └── workflows/
-        └── release.yml
+│   ├── __init__.py        Versão e metadados
+│   ├── __main__.py        Entrada do pacote
+│   ├── config.py          Configurações
+│   ├── faker.py           Criação e inicialização dos processos simulados
+│   ├── discord_db.py      Consulta e seleção de jogos
+│   ├── steam.py           Integração com metadados da Steam
+│   ├── updater.py         Atualização automática
+│   ├── net.py             Funções de rede
+│   ├── ui.py              Interface do terminal
+│   └── errors.py          Exceções do projeto
+├── tests/                 Testes automatizados
+├── settings.py            Configurações editáveis
+├── requirements.txt       Dependências
+└── .github/workflows/     Automação de versões
 ```
 
-## Configuração
+## Atualizador automático
 
-As configurações editáveis ficam em `settings.py`.
-
-As principais opções são:
-
-- `CHOSEN_FOLDER`: pasta onde os arquivos simulados serão criados.
-- `AUTO_DELETE`: remove automaticamente os arquivos ao terminar.
-- `TIMER_MINUTES`: duração do temporizador em minutos.
-
-## Atualização automática
-
-Quando uma nova versão é publicada no GitHub, o programa compilado pode verificar a versão disponível e atualizar o executável automaticamente.
+Quando o projeto é distribuído como executável e há uma nova versão publicada, a ferramenta pode consultar as versões disponíveis no GitHub e tentar atualizar o arquivo executável. Essa função não é usada quando o programa é executado diretamente a partir do código-fonte.
 
 ## Aviso legal
 
-**Apenas para fins educacionais e de pesquisa.**
+Este projeto é desenvolvido por Rissa para fins educacionais e de pesquisa. O uso é de responsabilidade de quem o executa. Respeite os termos de serviço do Discord, da Steam e de quaisquer outros serviços envolvidos. Rissa não se responsabiliza por consequências decorrentes do uso indevido.
 
-Esta ferramenta foi criada para estudar o funcionamento da detecção de jogos e processos. O usuário é responsável por verificar e respeitar as leis, os termos de serviço do Discord, do Steam e de qualquer outro serviço utilizado.
+## Créditos
 
-A desenvolvedora não se responsabiliza por consequências decorrentes do uso inadequado da ferramenta.
+**Desenvolvido por Rissa.**
 
-## Licença
-
-Este projeto utiliza a licença **GPL v3**. Consulte o arquivo `LICENSE` para os termos completos.
-
-<br/>
-
-<div align="center">
-
-Modificado e traduzido por **Rissa**
-
-</div>
+Consulte o arquivo `LICENSE` para os termos da licença.

@@ -1,7 +1,7 @@
 """
 orbshacker – central configuration.
 
-Lê os valores editáveis pelo usuário do arquivo ``settings.py`` na raiz.
+Reads user-editable values from the root-level ``settings.py``.
 If a value is missing there, the default defined below is used.
 Internal-only constants (API URLs, headers, timeouts) live here
 and are NOT exposed in settings.py.
@@ -31,9 +31,9 @@ def _get_default_json_content() -> str:
     return json.dumps(content, indent=2)
 
 def _is_faked_game() -> bool:
-    """Verifica se o executável/script atual é uma cópia de jogo simulada."""
+    """Check if the currently running executable/script is a faked game copy."""
     if getattr(sys, "frozen", False):
-        name = Path(sys.executable).name.lower()
+        name = Path(str(sys.executable).replace(chr(92), "/")).name.lower()
         return name != "orbshacker.exe"
     else:
         name = Path(sys.argv[0]).name.lower()
@@ -121,7 +121,7 @@ _user = _load_settings()
 
 
 def _get(name: str, default: T) -> T:
-    """Retorna um valor das configurações do usuário ou o valor padrão."""
+    """Return a value from the user settings, falling back to *default*."""
     if _user is None:
         return default
     if isinstance(_user, dict):
@@ -153,7 +153,7 @@ def _git_version() -> str | None:
 
 
 def _resolve_version() -> str:
-    """Obtém a versão do aplicativo pelos metadados da compilação ou pelas tags do Git."""
+    """Resolve the app version from build metadata or git tags."""
     built_version = getattr(_build_version, "VERSION", None)
     if built_version:
         return str(built_version)
@@ -170,8 +170,8 @@ VERSION   = _resolve_version()
 DEVELOPER = "Rissa"
 
 # ── GitHub repo ───────────────────────────────────────────────────────────────
-GITHUB_REPO_OWNER = "Rissa"
-GITHUB_REPO_NAME  = "farm-de-orbs"
+GITHUB_REPO_OWNER = "rissveil"
+GITHUB_REPO_NAME  = "farmdeorbs"
 REPO_URL          = f"https://github.com/{GITHUB_REPO_OWNER}/{GITHUB_REPO_NAME}"
 
 # ── Network endpoints (internal – not in settings.py) ─────────────────────────
@@ -194,7 +194,7 @@ DISCORD_HEADERS = {
         "Chrome/120.0.0.0 Safari/537.36"
     ),
     "Accept":          "application/json",
-    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
     "Referer":         "https://discord.com/",
     "Origin":          "https://discord.com",
 }

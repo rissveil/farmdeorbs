@@ -38,21 +38,21 @@ class DiscordGamesDB:
 
     def _load(self):
         """Load games from Discord API or GitHub backup."""
-        print_color("\n[*] Carregando banco de dados de jogos...", Colors.YELLOW)
+        print_color("\n[*] Carregando banco de jogos...", Colors.YELLOW)
         if self._load_from_discord_api():
             return
-        print_color("[!] API do Discord indisponível, usando o backup do GitHub...", Colors.YELLOW)
+        print_color("[!] API do Discord indisponível. Usando a cópia de segurança do GitHub...", Colors.YELLOW)
         if self._load_from_github():
             return
-        raise DatabaseLoadError("Não foi possível carregar o banco de dados de jogos de nenhuma fonte.")
+        raise DatabaseLoadError("Não foi possível carregar o banco de jogos de nenhuma fonte.")
 
     def _load_from_discord_api(self) -> bool:
         try:
-            loading_animation("Connecting to Discord API", 1.0)
+            loading_animation("Conectando à API do Discord", 1.0)
             self.games = fetch_json(config.DISCORD_API_URL, headers=config.DISCORD_HEADERS)
             self.source = "Discord Official API"
-            print_color(f"[OK] Carregados {len(self.games)} jogos da API do Discord", Colors.GREEN, bold=True)
-            print_color("[*] Usando banco de dados AO VIVO (atualizado diretamente dos servidores do Discord)", Colors.CYAN)
+            print_color(f"[OK] {len(self.games)} jogos carregados pela API do Discord", Colors.GREEN, bold=True)
+            print_color("[*] Usando o banco ATUALIZADO diretamente dos servidores do Discord", Colors.CYAN)
             return True
         except NetworkError as e:
             print_color(f"[!] Erro na API do Discord: {e}", Colors.YELLOW)
@@ -60,13 +60,13 @@ class DiscordGamesDB:
 
     def _load_from_github(self) -> bool:
         try:
-            loading_animation("Fetching GitHub backup", 1.0)
+            loading_animation("Obtendo a cópia de segurança do GitHub", 1.0)
             self.games = fetch_json(config.GITHUB_BACKUP_URL, timeout=config.REQUEST_TIMEOUT_LONG)
             self.source = "GitHub Backup"
-            print_color(f"[OK] Carregados {len(self.games)} jogos do GitHub", Colors.GREEN, bold=True)
+            print_color(f"[OK] {len(self.games)} jogos carregados do GitHub", Colors.GREEN, bold=True)
             return True
         except NetworkError as e:
-            print_color(f"[ERRO] Falha no backup do GitHub: {e}", Colors.RED)
+            print_color(f"[ERRO] Falha ao obter a cópia de segurança do GitHub: {e}", Colors.RED)
             return False
 
     def search_games(self, query: str) -> list[GameRecord]:
@@ -123,11 +123,11 @@ class DiscordGamesDB:
 
 def _pick_discord_game(db: DiscordGamesDB, query: str) -> GameRecord | None:
     """Pesquisar the Discord DB and let the user choose a game."""
-    loading_animation(f"Pesquisaring for '{query}'", 0.8)
+    loading_animation(f"Pesquisando por '{query}'", 0.8)
     matches = db.search_games(query)
     if not matches:
         print_color(f"\n[ERRO] Nenhum jogo encontrado para '{query}'", Colors.RED)
-        print_color("[!] Tente outro termo de pesquisa ou abreviação", Colors.YELLOW)
+        print_color("[!] Tente outro termo ou uma abreviação", Colors.YELLOW)
         time.sleep(config.SLEEP_LONG)
         return None
 
@@ -142,14 +142,14 @@ def _pick_discord_game(db: DiscordGamesDB, query: str) -> GameRecord | None:
             alias_str = ', '.join(aliases[:3])
             if len(aliases) > 3:
                 alias_str += f" (+{len(aliases) - 3} more)"
-            print(f"    {Colors.GRAY}Apelidos: {alias_str}{Colors.RESET}")
+            print(f"    {Colors.GRAY}Nomes alternativos: {alias_str}{Colors.RESET}")
         print(f"    {Colors.GRAY}ID: {game_id}{Colors.RESET}")
         if idx < len(matches):
             print(f"{Colors.GRAY}{'─' * 75}{Colors.RESET}")
     print()
 
     raw = input(f"{Colors.BOLD}Selecione [1-{len(matches)}]{Colors.RESET} (ou 'voltar'): ").strip()
-    if raw.lower() in ('back', 'b', 'voltar', 'v', ''):
+    if raw.lower() in ('back', 'voltar', 'b', ''):
         return None
     try:
         idx = int(raw)
@@ -167,9 +167,9 @@ def _resolve_discord_exe(db: DiscordGamesDB, game: GameRecord) -> str | None:
     exe_name = db.get_win32_executable(game)
     if exe_name:
         return exe_name
-    print_color("\n[ERRO] Nenhum executável do Windows encontrado para este jogo", Colors.RED)
-    print_color("[!] Este jogo pode não ter uma versão para Windows ou dados do executável", Colors.YELLOW)
-    if ask_confirm("Enter executable name manually?"):
+    print_color("\n[ERRO] Nenhum executável do Windows foi encontrado para este jogo", Colors.RED)
+    print_color("[!] Este jogo pode não ter versão para Windows ou dados de executável", Colors.YELLOW)
+    if ask_confirm("Deseja informar o nome do executável manualmente?"):
         exe_name = input(f"{Colors.BOLD}Nome do executável:{Colors.RESET} ").strip()
         if not exe_name:
             print_color("\n[!] Operação cancelada", Colors.YELLOW)
@@ -180,23 +180,23 @@ def _resolve_discord_exe(db: DiscordGamesDB, game: GameRecord) -> str | None:
 
 
 def database_mode(db: DiscordGamesDB, faker: GameFaker) -> None:
-    """Banco de dados search mode."""
-    print_boxed_title("PESQUISA NO BANCO DE DADOS", width=50, color=Colors.CYAN)
+    """Modo de pesquisa no banco de jogos."""
+    print_boxed_title("PESQUISA DE JOGOS", width=50, color=Colors.CYAN)
     print_color(f"[*] Banco de dados: {db.source}", Colors.CYAN)
     print_color(f"[*] Total de jogos disponíveis: {len(db.games)}", Colors.GRAY)
-    print_color("\n[*] Pesquise por nome ou abreviação", Colors.CYAN)
-    print_color("[*] Exemplos: PUBG, Fortnite, League, Valorant, Minecraft", Colors.GRAY)
+    print_color("\n[*] Pesquise pelo nome ou por uma abreviação", Colors.CYAN)
+    print_color("[*] Exemplos: PUBG, Fortnite, League, Valorant e Minecraft", Colors.GRAY)
     print()
 
     query = input(f"{Colors.BOLD}Pesquisar{Colors.RESET} (ou 'voltar'): ").strip()
-    if query.lower() in ('back', 'b', 'voltar', 'v', ''):
+    if query.lower() in ('back', 'voltar', 'b', ''):
         return
 
     selected = _pick_discord_game(db, query)
     if not selected:
         return
 
-    loading_animation("Analysing game data", 0.8)
+    loading_animation("Analisando os dados do jogo", 0.8)
     exe_name = _resolve_discord_exe(db, selected)
     if not exe_name:
         return
@@ -210,7 +210,7 @@ def database_mode(db: DiscordGamesDB, faker: GameFaker) -> None:
     if len(all_exes) > 1:
         print(f"  {Colors.GRAY}Outros executáveis: {', '.join(all_exes[1:3])}{Colors.RESET}")
         if len(all_exes) > 3:
-            print(f"  {Colors.GRAY}(+{len(all_exes) - 3} mais executáveis disponíveis){Colors.RESET}")
+            print(f"  {Colors.GRAY}(+{len(all_exes) - 3} outros executáveis disponíveis){Colors.RESET}")
     print(f"  Caminho: {Colors.GRAY}{faker.chosen_path / config.FAKE_EXE_DIR / exe_name}{Colors.RESET}")
 
     if not ask_confirm():
@@ -222,9 +222,9 @@ def database_mode(db: DiscordGamesDB, faker: GameFaker) -> None:
     if result:
         print()
         faker.launch_executable(result)
-        print_color("\n[OK] Configuração concluída! O Discord deve detectar o jogo.", Colors.GREEN, bold=True)
-        print_color("[!] IMPORTANTE: o Discord DEVE estar em execução para a simulação funcionar", Colors.YELLOW)
-        print_color("[*] Mantenha o processo em execução até a missão ser concluída", Colors.CYAN)
-        print_color("[*] DICA: execute esta ferramenta novamente para simular outro jogo simultaneamente!", Colors.MAGENTA)
+        print_color("\n[OK] Configuração concluída! O Discord deve reconhecer o jogo.", Colors.GREEN, bold=True)
+        print_color("[!] IMPORTANTE: O Discord precisa estar aberto para que a simulação funcione.", Colors.YELLOW)
+        print_color("[*] Mantenha o processo aberto até concluir a missão.", Colors.CYAN)
+        print_color("[*] DICA: execute a ferramenta novamente para simular outro jogo ao mesmo tempo!", Colors.MAGENTA)
 
     input(f"\n{Colors.GRAY}Pressione Enter para continuar...{Colors.RESET}")

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-build.py – Automatiza a compilação do Farm de Orbs.
+build.py – Automates compiling orbshacker.
 
 This script:
 1. Resolves the latest version from git tags.
